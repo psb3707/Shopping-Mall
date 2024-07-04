@@ -53,6 +53,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = get_object_or_404(Order,pk=pk)
         order.status = 'Cancel'
         order.save()
+        order_items = Order_Item.objects.filter(order=order)
+        for order_item in order_items:
+            order_item.item.stock_quantity += order_item.count
+            order_item.save()
         serializer = OrderSerializer(order)
         return Response(serializer.data)        
         
